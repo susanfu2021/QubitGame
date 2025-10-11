@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Qubit Coin Game (Speech Sound)</title>
+  <script src="https://www.x3dom.org/download/x3dom.js"></script>
+  <link rel="stylesheet" href="https://www.x3dom.org/download/x3dom.css">
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      text-align: center; 
+      background: linear-gradient(135deg, #e6f2ff 0%, #cce5ff 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    h1 {
+      font-size: 2.5em;
+      font-weight: bold;
+      font-style: italic;
+      color: #2c3e50;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      font-size: 1.2em;
+      font-weight: 500;
+      font-style: italic;
+      color: #34495e;
+      margin-bottom: 30px;
+    }
+    
+    #result { 
+      font-size: 1.5em; 
+      font-weight: bold;
+      margin: 20px; 
+      color: #2c3e50;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    button { 
+      font-size: 1.2em; 
+      font-weight: bold;
+      padding: 12px 25px; 
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    #spinBtn {
+      background: linear-gradient(to bottom, #3498db, #2980b9);
+      color: white;
+    }
+    
+    #spinBtn:hover:not(:disabled) {
+      background: linear-gradient(to bottom, #2980b9, #2471a3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+    }
+    
+    #measureBtn {
+      background: linear-gradient(to bottom, #e74c3c, #c0392b);
+      color: white;
+    }
+    
+    #measureBtn:hover:not(:disabled) {
+      background: linear-gradient(to bottom, #c0392b, #a93226);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+    }
+    
+    button:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    #x3d-container { 
+      margin: 20px auto; 
+      width: 500px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Qubit Game: Coin Spin Analogy</h1>
+    <div class="subtitle">Experience quantum superposition through a spinning coin</div>
+    
+    <div id="x3d-container">
+      <x3d width="500px" height="350px">
+        <scene>
+          <viewpoint position="0 0 5"></viewpoint>
+          <transform id="coinTransform">
+            <shape>
+              <appearance>
+                <material diffuseColor="0.9 0.75 0.1" specularColor="1.0 0.9 0.3" shininess="0.8"/>
+              </appearance>
+              <cylinder radius="1" height="0.1"/>
+            </shape>
+            <!-- Heads side -->
+            <transform translation="0 0.05 0">
+              <shape>
+                <appearance>
+                  <material diffuseColor="0.2 0.7 1" />
+                </appearance>
+                <text string='"0"' solid='false'>
+                  <fontstyle family='"SANS"' size='0.5' justify='"MIDDLE"' style='BOLD' />
+                </text>
+              </shape>
+            </transform>
+            <!-- Tails side -->
+            <transform translation="0 -0.05 0" rotation="1 0 0 3.14159">
+              <shape>
+                <appearance>
+                  <material diffuseColor="1 0.5 0.2" />
+                </appearance>
+                <text string='"1"' solid='false'>
+                  <fontstyle family='"SANS"' size='0.5' justify='"MIDDLE"' style='BOLD' />
+                </text>
+              </shape>
+            </transform>
+          </transform>
+        </scene>
+      </x3d>
+    </div>
+    
+    <div>
+      <button id="spinBtn">Spin (Superposition)</button>
+      <button id="measureBtn" disabled>Measure (Collapse)</button>
+    </div>
+    
+    <div id="result">Click "Spin" to put the qubit in superposition</div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      let spinning = false;
+      let spinInterval = null;
+      const coinTransform = document.getElementById('coinTransform');
+      const spinBtn = document.getElementById('spinBtn');
+      const measureBtn = document.getElementById('measureBtn');
+      const resultDiv = document.getElementById('result');
+      let angle = 0;
+
+      // SpeechSynthesis helper
+      function speak(text) {
+        const synth = window.speechSynthesis;
+        if (synth.speaking) synth.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        // You can set utter.voice for a specific language if you want
+        synth.speak(utter);
+      }
+
+      spinBtn.onclick = function() {
+        if (spinning) return;
+        spinning = true;
+        measureBtn.disabled = false;
+        spinBtn.disabled = true;
+        resultDiv.textContent = "Coin is spinning... (Qubit in superposition)";
+        speak("Spinning! The qubit is in superposition.");
+        spinInterval = setInterval(() => {
+          angle += 0.2;
+          coinTransform.setAttribute('rotation', `1 0 0 ${angle}`);
+        }, 30);
+      };
+
+      measureBtn.onclick = function() {
+        if (!spinning) return;
+        spinning = false;
+        spinBtn.disabled = false;
+        measureBtn.disabled = true;
+        clearInterval(spinInterval);
+
+        // Simulate measurement: random collapse to 0 or 1
+        const outcome = Math.random() < 0.5 ? 0 : 1;
+        if (outcome === 0) {
+          coinTransform.setAttribute('rotation', '1 0 0 0');
+          resultDiv.textContent = "Measured: Qubit collapsed to |0⟩ (Heads)";
+          speak("Landed on heads! Qubit state is zero.");
+        } else {
+          coinTransform.setAttribute('rotation', '1 0 0 3.14159');
+          resultDiv.textContent = "Measured: Qubit collapsed to |1⟩ (Tails)";
+          speak("Landed on tails! Qubit state is one.");
+        }
+      };
+    });
+  </script>
+</body>
+</html>
